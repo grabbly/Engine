@@ -1,0 +1,90 @@
+# Script Communication — Events
+
+## How emit Works
+
+`LocalExtension.emit("eventName", ...args)` fires the event **on the display container** (`this.display`).
+
+This means the event travels on the PIXI EventEmitter built into the container — not on the script class itself.
+
+```
+Script.emit("startGamePressed")
+       ↓
+this.display.emit("startGamePressed")   ← fires here
+       ↑
+anyone holding a reference to this container can listen with .on(...)
+```
+
+---
+
+## Emitting an Event
+
+```typescript
+type LobbyEvents = {
+    startGamePressed: []
+}
+
+export default class Script extends LocalExtension<LobbyEvents> {
+    @Init
+    private Init() {
+        this.view.StartBtn.on("pointertap", () => {
+            this.emit("startGamePressed")   // fires on this.display
+        })
+    }
+}
+```
+
+---
+
+## Listening to an Event (from another script)
+
+The listener must have a reference to the **container** of the emitting script.
+The easiest way is `this.view.ChildName` if the emitting object is a child:
+
+```typescript
+export default class Script extends LocalExtension {
+    @Init
+    private Init() {
+        // UI_Lobby is a child object whose script emits "startGamePressed"
+        this.view.UI_Lobby.on("startGamePressed", () => {
+            this.view.UI_Lobby.close()
+            this.view.UI_Gameplay.open()
+        })
+    }
+}
+```
+
+Or via `@Configurable` if the object is not a direct child:
+
+```typescript
+@Configurable
+private lobby: ExtendEvents<LobbyDisplay, LobbyEvents>
+
+// then:
+this.lobby.on("startGamePressed", () => { ... })
+```
+
+---
+
+## Listening on this.display (incoming events)
+
+A script can also receive events from the outside world via its own display:
+
+```typescript
+// Someone outside does: lobbyContainer.emit("bet", 100)
+this.display.on("bet", (bet) => {
+    this.view.betPanel.setBet(bet)
+})
+```
+
+This is how parent scripts send data down to children.
+
+---
+
+## Communication Patterns — Summary
+
+| Pattern | Code | Use case |
+|---|---|---|
+| Child → Parent | `this.emit("event")` in child, `this.view.Child.on(...)` in parent | Button press, screen done |
+| Parent → Child | `this.view.Child.emit("event", data)` or call public method | Update state, send data |
+| Sibling via parent | Parent listens to A, calls B | Screen switching in Run |
+| Public method | `this.view.Child.open()` | Direct control with typed interface |
