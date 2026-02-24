@@ -66,7 +66,8 @@ export default class Script extends GlobalExtension<DisplayInterface, Events> {
 **Key difference from LocalExtension:**
 - Takes **two** generics: `<DisplayInterface, Events>`
 - `this.display` is typed as `DisplayInterface`
-- Behaves as a reusable component placed from the library into scenes
+- Created in the library, then **placed on a scene by dragging** from the library onto any scene object or onto the scene itself
+- Behaves as a reusable component — similar to a Unity prefab
 
 ---
 

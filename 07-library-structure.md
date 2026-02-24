@@ -51,10 +51,13 @@ This needs a direct test in a real scene script.
 
 ## GlobalExtension in Library
 
-Scripts created anywhere in the library (not attached to a scene object) are `GlobalExtension` instances.
-They can be dragged from the library onto scene objects — similar to Unity prefabs.
+Scripts created in the library (not attached to a scene object at creation time) are `GlobalExtension` instances.
 
-Examples: `HUD`, `ScaleButton` — reusable widgets placed from the library.
+**How to place them on a scene:** drag from the library onto any scene object, or directly onto the scene itself.
+
+Once placed, they behave as a component on that object — with access to `this.display`, `this.view`, decorators, etc.
+
+Examples: `HUD`, `ScaleButton` — reusable widgets dragged from the library onto scene objects.
 
 ---
 
