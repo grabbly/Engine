@@ -12,6 +12,7 @@ Knowledge base built from hands-on exploration of the SpinCraft engine (PIXI v8 
 | [04-configurable.md](04-configurable.md) | `@Configurable` and `ExtendEvents` — typed inspector references |
 | [05-imports-and-limits.md](05-imports-and-limits.md) | What works and what doesn't — import rules |
 | [06-decorators.md](06-decorators.md) | `@Init`, `@Update`, `@FixedUpdate`, `@Configurable` |
+| [07-library-structure.md](07-library-structure.md) | Library panel — folders, asset types, src/ modules |
 
 ## Key Principles (TL;DR)
 

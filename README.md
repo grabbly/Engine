@@ -16,6 +16,7 @@ Built from hands-on exploration and real project code. Contributions and correct
 | 04 | [04-configurable.md](04-configurable.md) | `@Configurable`, `ExtendEvents`, `ChildReference` |
 | 05 | [05-imports-and-limits.md](05-imports-and-limits.md) | Import rules and isolation model |
 | 06 | [06-decorators.md](06-decorators.md) | `@Init`, `@Update`, `@FixedUpdate` |
+| 07 | [07-library-structure.md](07-library-structure.md) | Library panel — folders, assets, `src/` modules |
 
 ---
 
