@@ -13,6 +13,7 @@ Knowledge base built from hands-on exploration of the SpinCraft engine (PIXI v8 
 | [05-imports-and-limits.md](05-imports-and-limits.md) | What works and what doesn't — import rules |
 | [06-decorators.md](06-decorators.md) | `@Init`, `@Update`, `@FixedUpdate`, `@Configurable` |
 | [07-library-structure.md](07-library-structure.md) | Library panel — folders, asset types, src/ modules |
+| [08-sound.md](08-sound.md) | `Sound` — playing audio via `@Configurable` |
 
 ## Key Principles (TL;DR)
 

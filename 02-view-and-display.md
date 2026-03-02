@@ -39,6 +39,29 @@ this.view.UI_Lobby.on("startGamePressed", () => { ... })
 
 **The name must match exactly** the object's name in the editor scene tree.
 
+---
+
+## Visibility Scope Rule
+
+> **A script can only see its own direct children.**
+> A child of one parent cannot access a child of another parent.
+
+This is a hard engine rule — `this.view` only resolves objects that are **descendants of `this.display`**.
+
+```
+Scene
+├── Run          ← Run script can see UI_Lobby and UI_Gameplay
+│   ├── UI_Lobby     ← Lobby script can see StartBtn, but NOT Grid
+│   │   └── StartBtn
+│   └── UI_Gameplay  ← Gameplay script can see Grid, but NOT StartBtn
+│       └── Grid
+```
+
+If a script needs to reference an object outside its own subtree, it **cannot** use `this.view`.
+The only options are:
+- **Parent as mediator** — the parent listens to one child and calls another
+- **`@Configurable`** — manually assign the reference in the inspector
+
 ### Typing this.view (optional, for the mirror workspace)
 
 In the real engine `this.view` is dynamically resolved. In the mirror you can use `any` or cast:

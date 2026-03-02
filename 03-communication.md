@@ -82,9 +82,14 @@ This is how parent scripts send data down to children.
 
 ## Communication Patterns — Summary
 
+> **Scope rule:** a script can only see its own direct children via `this.view`.
+> Two children of different parents are invisible to each other.
+> Cross-subtree communication must go through a common parent or via `@Configurable`.
+
 | Pattern | Code | Use case |
 |---|---|---|
 | Child → Parent | `this.emit("event")` in child, `this.view.Child.on(...)` in parent | Button press, screen done |
 | Parent → Child | `this.view.Child.emit("event", data)` or call public method | Update state, send data |
-| Sibling via parent | Parent listens to A, calls B | Screen switching in Run |
+| Sibling via parent | Parent listens to A, then calls B — **only way siblings can interact** | Screen switching in Run |
+| Cross-subtree | `@Configurable` field assigned in inspector | Objects in different branches of the scene tree |
 | Public method | `this.view.Child.open()` | Direct control with typed interface |

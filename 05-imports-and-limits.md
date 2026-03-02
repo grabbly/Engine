@@ -66,6 +66,32 @@ This is by design — components are meant to be independent and reusable.
 
 ---
 
+## Comments: Allowed Characters
+
+The engine parser only accepts standard characters in script source files.
+
+**Allowed:**
+- English letters and digits
+- Standard punctuation: `/ * - _ . , : ; ( ) [ ] { } = ! ? < > | & ^ % # @`
+
+**NOT allowed in comments or strings:**
+- Non-English characters (Cyrillic, Chinese, Arabic, etc.)
+- Emoji
+- Unicode arrows or special symbols: `→ ← ↑ ↓ ✅ ❌ ⚠️ •` etc.
+
+```typescript
+// OK: calculate next head position
+// OK: prevent 180-degree reversal
+
+// NOT OK: вычислить позицию головы
+// NOT OK: → move snake forward
+// NOT OK: ✅ done
+```
+
+This applies to all text inside the script file: comments, string literals, console.log messages.
+
+---
+
 ## Mirror Workspace Note
 
 In the local mirror (`Project-mirror/`) relative imports work fine for TypeScript type checking, but they reflect a structure that would not work in the actual engine. The mirror exists for offline development and type exploration only.
