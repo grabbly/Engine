@@ -38,7 +38,9 @@ export default class Script extends LocalExtension<Events> {
 **Key properties available:**
 - `this.display` — the PIXI Container this script is attached to
 - `this.view` — named children of the display object (see [02-view-and-display.md](02-view-and-display.md))
-- `this.context` — engine context (sound manager, etc.)
+
+> ⚠️ `LocalExtension` does **NOT** have `this.context`. No `displayManager`, no `application.renderer`.
+> Everything that needs engine/PIXI access must live in a `GlobalExtension`.
 
 ---
 
@@ -78,3 +80,53 @@ This is why `GlobalExtension` was unavailable in our scene scripts — the engin
 **Practical rule:**
 - Building a screen, button, panel, controller → `LocalExtension`
 - Building a reusable widget (win meter, slider, timer) placed from the library → `GlobalExtension`
+
+---
+
+## this.view — Only Sees LocalExtension
+
+`this.view.childName` only exposes methods of `LocalExtension` scripts. If a component has only a `GlobalExtension` on it, `this.view.childName.someMethod()` will fail at runtime — the method won't be found.
+
+```
+this.view.menuPopup.show()  ✅ — works if menuPopup.comp has a LocalExtension with show()
+this.view.menuPopup.show()  ❌ — fails if menuPopup.comp only has a GlobalExtension
+```
+
+---
+
+## Bridge Pattern: LocalExtension + GlobalExtension on the Same Component
+
+When you need a component accessible via `this.view` (LocalExtension) but also needs engine/PIXI access (GlobalExtension), put **both scripts on the same component** and connect them via `this.display` events:
+
+**LocalExtension** — public API, called from outside via `this.view`:
+```typescript
+export default class Script extends LocalExtension {
+    public show() {
+        this.display.emit('menu:show')  // passes to GlobalExtension
+    }
+    public hide() {
+        this.display.emit('menu:hide')
+    }
+}
+```
+
+**GlobalExtension** — has `this.context`, does real work, listens on the same container:
+```typescript
+export default class Script extends GlobalExtension<DisplayInterface> {
+    @Init
+    private init() {
+        this.display.on('menu:show', () => this.show())
+        this.display.on('menu:hide', () => this.hide())
+    }
+    public show() { /* render HTML, load assets, etc */ }
+    public hide() { /* cleanup */ }
+}
+```
+
+Both scripts share the same `this.display` Container — it acts as the event bus between them.
+
+| | LocalExtension | GlobalExtension |
+|---|---|---|
+| Accessible via `this.view` | ✅ | ❌ |
+| Has `this.context` / PIXI access | ❌ | ✅ |
+| Role in bridge pattern | Public API (emits events) | Implementation (listens + acts) |

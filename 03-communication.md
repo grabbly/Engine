@@ -93,3 +93,65 @@ This is how parent scripts send data down to children.
 | Sibling via parent | Parent listens to A, then calls B — **only way siblings can interact** | Screen switching in Run |
 | Cross-subtree | `@Configurable` field assigned in inspector | Objects in different branches of the scene tree |
 | Public method | `this.view.Child.open()` | Direct control with typed interface |
+
+---
+
+## Bridge Pattern: LocalExtension ↔ GlobalExtension on Same Component
+
+`this.view` only exposes `LocalExtension` methods — `GlobalExtension` is invisible to it.
+When you need engine/PIXI access (`this.context`) but also `this.view` visibility, put **both scripts on the same component** and connect via `this.display`:
+
+```typescript
+// LocalExtension — the public API, callable via this.view.myComp.show()
+export default class Script extends LocalExtension {
+    public show() { this.display.emit('menu:show') }
+    public hide() { this.display.emit('menu:hide') }
+}
+
+// GlobalExtension — has this.context, does the real work
+export default class Script extends GlobalExtension<DisplayInterface> {
+    @Init
+    private init() {
+        this.display.on('menu:show', () => this.show())
+        this.display.on('menu:hide', () => this.hide())
+    }
+    public show() { /* render HTML, load assets via this.context */ }
+    public hide() { /* cleanup */ }
+}
+```
+
+Both scripts share the same `this.display` Container — it acts as the event bus between them.
+
+> ⚠️ `LocalExtension` does **NOT** have `this.context` — no `displayManager`, no `application.renderer`.
+> If you need engine access, that code must live in the `GlobalExtension`.
+
+---
+
+## Bridge Pattern: LocalExtension ↔ GlobalExtension on Same Component
+
+`this.view` only exposes `LocalExtension` methods — `GlobalExtension` is invisible to it.
+When you need engine/PIXI access (`this.context`) but also `this.view` visibility, put **both scripts on the same component** and connect via `this.display`:
+
+```typescript
+// LocalExtension — the public API, callable via this.view.myComp.show()
+export default class Script extends LocalExtension {
+    public show() { this.display.emit('menu:show') }
+    public hide() { this.display.emit('menu:hide') }
+}
+
+// GlobalExtension — has this.context, does the real work
+export default class Script extends GlobalExtension<DisplayInterface> {
+    @Init
+    private init() {
+        this.display.on('menu:show', () => this.show())
+        this.display.on('menu:hide', () => this.hide())
+    }
+    public show() { /* render HTML, load assets via this.context */ }
+    public hide() { /* cleanup */ }
+}
+```
+
+Both scripts share the same `this.display` Container — it acts as the event bus between them.
+
+> ⚠️ `LocalExtension` does **NOT** have `this.context` — no `displayManager`, no `application.renderer`.
+> If you need engine access, that code must live in the `GlobalExtension`.
